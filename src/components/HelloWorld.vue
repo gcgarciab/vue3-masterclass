@@ -31,10 +31,17 @@
 </template>
 
 <script>
+import sourceData from '@/data.json'
+console.log(sourceData)
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data () {
+    return {
+      sourceData
+    }
   }
 }
 </script>
