@@ -8,6 +8,7 @@
             id=""
             cols="30"
             rows="10"
+            class="form-input"
           ></textarea>
         </div>
 
