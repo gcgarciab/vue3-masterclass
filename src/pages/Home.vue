@@ -1,11 +1,10 @@
 <template>
-  <h1>Welcome to the Forum</h1>
+  <h1 class="push-top">Welcome to the Forum</h1>
 
   <CategoryList :categories="categories"/>
 </template>
 
 <script>
-import sourceData from '@/data.json'
 import CategoryList from '@/components/CategoryList'
 
 export default {
@@ -13,9 +12,9 @@ export default {
     CategoryList
   },
 
-  data () {
-    return {
-      categories: sourceData.categories
+  computed: {
+    categories () {
+      return this.$store.state.categories
     }
   }
 }
