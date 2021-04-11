@@ -1,5 +1,5 @@
 <template>
-  <span :title="hummanFriendlyDate()">
+  <span :title="hummanFriendlyDate">
     {{ diffForHumans() }}
   </span>
 </template>
