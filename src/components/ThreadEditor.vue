@@ -26,7 +26,7 @@
     <div class="btn-group">
       <button class="btn btn-ghost" @click="$emit('cancel')">Cancel</button>
       <button class="btn btn-blue" type="submit" name="Publish">
-        Publish
+        {{ existing ? 'Update' : 'Publish' }}
       </button>
     </div>
   </form>
@@ -52,6 +52,12 @@ export default {
         title: this.title,
         text: this.text
       }
+    }
+  },
+
+  computed: {
+    existing () {
+      return !!this.title
     }
   },
 
