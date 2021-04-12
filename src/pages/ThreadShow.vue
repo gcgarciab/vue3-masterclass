@@ -20,6 +20,7 @@
 <script>
 import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
+import { findById } from '@/helpers'
 
 export default {
   name: 'ThreasShow',
@@ -46,7 +47,7 @@ export default {
     },
 
     thread () {
-      return this.threads.find(thread => thread.id === this.id)
+      return findById(this.threads, this.id)
     },
 
     threadPosts () {

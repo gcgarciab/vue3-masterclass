@@ -19,6 +19,7 @@
 
 <script>
 import ThreadList from '@/components/ThreadList'
+import { findById } from '@/helpers'
 
 export default {
   components: {
@@ -34,7 +35,7 @@ export default {
 
   computed: {
     forum () {
-      return this.$store.state.forums.find(forum => forum.id === this.id)
+      return findById(this.$store.state.forums, this.id)
     },
 
     threads () {

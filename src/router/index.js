@@ -8,6 +8,7 @@ import NotFound from '@/pages/NotFound'
 import { createRouter, createWebHistory } from 'vue-router'
 import sourceData from '@/data.json'
 import Profile from '@/pages/Profile'
+import { findById } from '@/helpers'
 
 const routes = [
   {
@@ -50,7 +51,7 @@ const routes = [
     // route guard
     beforeEnter (to, from, next) {
       // Check if thread exists
-      const threadExists = sourceData.threads.find(thread => thread.id === to.params.id)
+      const threadExists = findById(sourceData.threads, to.params.id)
       // if exists continue
       if (threadExists) {
         return next()
