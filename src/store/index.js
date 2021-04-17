@@ -9,23 +9,29 @@ export default createStore({
   },
 
   getters: {
-    authUser: state => {
-      const user = findById(state.users, state.authId)
-      if (!user) return null
+    authUser: (state, getters) => {
+      return getters.user(state.authId)
+    },
 
-      return {
-        ...user,
-        get posts () {
-          return state.posts.filter(post => post.userId === user.id)
-        },
-        get postsCount () {
-          return this.posts.length
-        },
-        get threads () {
-          return state.threads.filter(post => post.userId === user.id)
-        },
-        get threadsCount () {
-          return this.threads.length
+    user: state => {
+      return (id) => {
+        const user = findById(state.users, id)
+        if (!user) return null
+
+        return {
+          ...user,
+          get posts () {
+            return state.posts.filter(post => post.userId === user.id)
+          },
+          get postsCount () {
+            return this.posts.length
+          },
+          get threads () {
+            return state.threads.filter(post => post.userId === user.id)
+          },
+          get threadsCount () {
+            return this.threads.length
+          }
         }
       }
     },

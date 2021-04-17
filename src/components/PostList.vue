@@ -9,10 +9,11 @@
         <a href="#" class="user-name">{{ userById( post.userId ).name }}</a>
 
         <a href="#">
-          <img :src="userById( post.userId ).avatar" alt="" class="avatar-large">
+          <img :src="userById(post.userId).avatar" alt="" class="avatar-large">
         </a>
 
-        <p class="desktop-only text-small"> posts</p>
+        <p class="desktop-only text-small">{{ userById(post.userId).postsCount }} posts</p>
+        <p class="desktop-only text-small">{{ userById(post.userId).threadsCount }} threads</p>
       </div>
 
       <div class="post-content">
@@ -29,8 +30,6 @@
 </template>
 
 <script>
-import { findById } from '@/helpers'
-
 export default {
   props: {
     posts: {
@@ -47,7 +46,7 @@ export default {
 
   methods: {
     userById (userId) {
-      return findById(this.users, userId)
+      return this.$store.getters.user(userId)
     }
   }
 }
