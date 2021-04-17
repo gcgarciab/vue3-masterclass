@@ -11,6 +11,14 @@
       </router-link>
     </h1>
 
+    <p>
+      By <a href="#" class="link-unstyled">{{ thread.author.name }}</a>, <AppDate :timestamp="thread.publishedAt"/>.
+      <span
+        style="float: right; margin-top: 2px;"
+        class="hide-mobile text-faded text-small"
+      >{{ thread.repliesCount }} replies by {{ thread.contributorsCount }} contributors</span>
+    </p>
+
     <PostList :posts="threadPosts" />
 
     <PostEditor @save="addPost"/>
@@ -20,14 +28,15 @@
 <script>
 import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
-import { findById } from '@/helpers'
+import AppDate from '@/components/AppDate'
 
 export default {
   name: 'ThreasShow',
 
   components: {
     PostList,
-    PostEditor
+    PostEditor,
+    AppDate
   },
 
   props: {
@@ -47,7 +56,7 @@ export default {
     },
 
     thread () {
-      return findById(this.threads, this.id)
+      return this.$store.getters.thread(this.id)
     },
 
     threadPosts () {
