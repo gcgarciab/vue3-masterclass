@@ -202,6 +202,11 @@ export default createStore({
 function appendChildToParentMutation ({ parent, child }) {
   return (state, { childId, parentId }) => {
     const resource = findById(state[parent], parentId)
+    if (!resource) {
+      console.warn(`Appending ${child} to ${parent} ${parentId} failed because the parent didn't exists.`)
+      return
+    }
+
     resource[child] = resource[child] || []
 
     if (!resource[child].includes(childId)) {
