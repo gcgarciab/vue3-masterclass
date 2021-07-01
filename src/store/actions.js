@@ -4,7 +4,7 @@ import firebase from 'firebase'
 export default {
   async createPost ({ commit, state }, post) {
     post.userId = state.authId
-    post.publishedAt = Math.floor(Date.now() / 1000)
+    post.publishedAt = firebase.firestore.FieldValue.serverTimestamp()
 
     const batch = firebase.firestore().batch()
     const postRef = firebase.firestore().collection('posts').doc()
@@ -15,9 +15,10 @@ export default {
       contributors: firebase.firestore.FieldValue.arrayUnion(state.authId)
     })
     await batch.commit()
+    const newPost = await postRef.get()
 
-    commit('setItem', { resource: 'posts', item: { ...post, id: postRef.id } }) // Set the post
-    commit('appendPostToThread', { childId: postRef.id, parentId: post.threadId }) // append the post to thread
+    commit('setItem', { resource: 'posts', item: { ...newPost.data(), id: newPost.id } }) // Set the post
+    commit('appendPostToThread', { childId: newPost.id, parentId: post.threadId }) // append the post to thread
     commit('appendContributorToThread', { childId: state.authId, parentId: post.threadId }) // append the post to thread
   },
 

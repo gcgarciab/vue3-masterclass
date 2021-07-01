@@ -1,6 +1,7 @@
+<!--suppress JSUnresolvedFunction -->
 <template>
-  <span :title="hummanFriendlyDate">
-    {{ diffForHumans() }}
+  <span :title="humanFriendlyDate">
+    {{ diffForHumans }}
   </span>
 </template>
 
@@ -15,17 +16,21 @@ export default {
   props: {
     timestamp: {
       required: true,
-      type: Number
+      type: [Number, Object]
     }
   },
 
-  methods: {
-    diffForHumans () {
-      return dayjs.unix(this.timestamp).fromNow()
+  computed: {
+    normalizedTimestamp () {
+      return this.timestamp?.seconds || this.timestamp
     },
 
-    hummanFriendlyDate () {
-      return dayjs.unix(this.timestamp).format('llll')
+    diffForHumans () {
+      return dayjs.unix(this.normalizedTimestamp).fromNow()
+    },
+
+    humanFriendlyDate () {
+      return dayjs.unix(this.normalizedTimestamp).format('llll')
     }
   }
 }
