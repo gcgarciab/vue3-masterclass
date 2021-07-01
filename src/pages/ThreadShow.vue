@@ -1,3 +1,4 @@
+<!--suppress ES6MissingAwait -->
 <template>
   <div class="col-large push-top">
     <h1>
@@ -12,7 +13,7 @@
     </h1>
 
     <p>
-      By <a href="#" class="link-unstyled">{{ thread.author.name }}</a>, <AppDate :timestamp="thread.publishedAt"/>.
+      By <a href="#" class="link-unstyled">{{ thread.author?.name }}</a>, <AppDate :timestamp="thread.publishedAt" />.
       <span
         style="float: right; margin-top: 2px;"
         class="hide-mobile text-faded text-small"
@@ -31,7 +32,7 @@ import PostEditor from '@/components/PostEditor'
 import AppDate from '@/components/AppDate'
 
 export default {
-  name: 'ThreasShow',
+  name: 'ThreadShow',
 
   components: {
     PostList,
@@ -73,6 +74,19 @@ export default {
 
       this.$store.dispatch('createPost', post)
     }
+  },
+
+  async created () {
+    // fetch the thread
+    const thread = await this.$store.dispatch('fetchThread', { id: this.id })
+    // fetch the user
+    this.$store.dispatch('fetchUser', { id: thread.userId })
+    // fetch the posts
+    const posts = await this.$store.dispatch('fetchPosts', { ids: thread.posts })
+    // fetch the users associated with the posts
+    const users = posts.map(post => post.userId)
+
+    this.$store.dispatch('fetchUsers', { ids: users })
   }
 }
 </script>

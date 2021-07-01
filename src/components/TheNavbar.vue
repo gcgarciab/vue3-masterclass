@@ -1,3 +1,4 @@
+<!--suppress JSUnresolvedVariable -->
 <template>
   <header class="header" id="header">
     <router-link :to="{ name: 'Home' }" class="logo">
@@ -14,7 +15,7 @@
     <!-- use .navbar-open to open nav -->
     <nav class="navbar">
       <ul>
-        <li class="navbar-user">
+        <li v-if="authUser" class="navbar-user">
           <router-link :to="{ name: 'Profile' }">
             <img class="avatar-small" :src="authUser.avatar" :alt="authUser.name">
             <span>
@@ -28,7 +29,7 @@
           <div id="user-dropdown">
             <div class="triangle-drop"></div>
             <ul class="dropdown-menu">
-              <li class="dropdown-menu-item"><a href="profile.html">View profile</a></li>
+              <li class="dropdown-menu-item"><a href="#">View profile</a></li>
               <li class="dropdown-menu-item"><a href="#">Log out</a></li>
             </ul>
           </div>

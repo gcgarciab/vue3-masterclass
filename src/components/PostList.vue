@@ -1,3 +1,4 @@
+<!--suppress JSUnresolvedVariable, CssFloatPxLength -->
 <template>
   <div class="post-list">
     <div
@@ -5,7 +6,7 @@
       :key="post.id"
       class="post"
     >
-      <div class="user-info">
+      <div v-if="userById(post.userId)" class="user-info">
         <a href="#" class="user-name">{{ userById( post.userId ).name }}</a>
 
         <a href="#">
@@ -23,14 +24,17 @@
       </div>
 
       <div class="post-date text-faded">
-        <AppDate :timestamp="post.publishedAt"/>
+        <AppDate :timestamp="post.publishedAt" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import AppDate from '@/components/AppDate'
+
 export default {
+  components: { AppDate },
   props: {
     posts: {
       type: Array,
@@ -62,8 +66,7 @@ export default {
     flex-wrap: wrap;
     justify-content: space-between;
     background-color: white;
-    padding: 20px 10px;
-    padding-bottom: 7px;
+    padding: 20px 10px 7px;
     box-shadow: 2px 2px 1px rgba(136, 136, 136, 0.09);
     margin-bottom: 20px;
   }
@@ -90,29 +93,28 @@ export default {
 
   @media (max-width: 820px) {
     .post .user-info {
-        order: -2;
-        flex-direction: row;
-        justify-content: flex-start;
-        background: rgba(73, 89, 96, 0.06);
-        margin-right: 0;
-        padding: 5px;
-        padding-left: 10px;
+      order: -2;
+      flex-direction: row;
+      justify-content: flex-start;
+      background: rgba(73, 89, 96, 0.06);
+      margin-right: 0;
+      padding: 5px 5px 5px 10px;
     }
 
     .post .user-info .avatar-large {
-        height: 35px;
-        width: 35px;
-        margin-right: 5px;
-        order: 1;
+      height: 35px;
+      width: 35px;
+      margin-right: 5px;
+      order: 1;
     }
 
     .post .user-info .user-name {
-        order: 2;
+      order: 2;
     }
 
     .post .user-info > * {
-        margin-right: 5px;
-        margin-bottom: 0;
+      margin-right: 5px;
+      margin-bottom: 0;
     }
   }
 
@@ -126,18 +128,18 @@ export default {
 
   @media (max-width: 820px) {
     .post .post-date {
-        order: -1;
-        flex-basis: 40%;
-        background: rgba(73, 89, 96, 0.06);
-        padding-right: 10px;
-        padding-top: 16px;
-        margin-bottom: 0px;
+      order: -1;
+      flex-basis: 40%;
+      background: rgba(73, 89, 96, 0.06);
+      padding-right: 10px;
+      padding-top: 16px;
+      margin-bottom: 0;
     }
   }
 
   @media (max-width: 720px) {
     .post {
-        padding: 0px;
+      padding: 0;
     }
   }
 
@@ -169,7 +171,7 @@ export default {
   }
 
   .post-content blockquote {
-    margin: 25px 0px;
+    margin: 25px 0;
   }
 
   .post-content blockquote.big {
@@ -182,16 +184,16 @@ export default {
     top: -25px;
     left: -25px;
     font-size: 42px;
-    font-family: FontAwesome;
+    font-family: FontAwesome, sans-serif;
     content: "\f10e";
     color: #263959;
   }
 
   @media (max-width: 820px) {
     .post-content blockquote.big::before {
-        top: -15px;
-        left: -18px;
-        font-size: 32px;
+      top: -15px;
+      left: -18px;
+      font-size: 32px;
     }
   }
 
@@ -234,16 +236,16 @@ export default {
     top: -20px;
     left: -20px;
     font-size: 42px;
-    font-family: FontAwesome;
+    font-family: FontAwesome, sans-serif;
     content: "\f10e";
     color: #263959;
   }
 
   @media (max-width: 820px) {
     .post-content blockquote.small::before {
-        top: -18px;
-        left: -15px;
-        font-size: 32px;
+      top: -18px;
+      left: -15px;
+      font-size: 32px;
     }
   }
 
@@ -281,7 +283,7 @@ export default {
 
   .post-content blockquote.simple {
     position: relative;
-    padding: 0px 10px 0px 20px;
+    padding: 0 10px 0 20px;
     font-weight: 100;
     font-style: italic;
     font-size: 17px;
@@ -293,16 +295,16 @@ export default {
     top: -25px;
     left: -25px;
     font-size: 42px;
-    font-family: FontAwesome;
+    font-family: FontAwesome, sans-serif;
     content: "\f10e";
     color: #263959;
   }
 
   @media (max-width: 820px) {
     .post-content blockquote.simple::before {
-        top: -15px;
-        left: -18px;
-        font-size: 32px;
+      top: -15px;
+      left: -18px;
+      font-size: 32px;
     }
   }
 
