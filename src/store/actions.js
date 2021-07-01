@@ -41,16 +41,6 @@ export default {
     commit('setItem', { resource: 'users', item: user })
   },
 
-  // ---------------------------------------------------------
-  // Fetch single resource
-  // ---------------------------------------------------------
-
-  fetchCategory: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'categories', id, emoji: '🏷' }),
-  fetchForum: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'forums', id, emoji: '🏁' }),
-  fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id, emoji: '📄' }),
-  fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, emoji: '🙋🏻‍' }),
-  fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id, emoji: '💬' }),
-
   fetchAllCategories ({ commit }) {
     console.log('🔥', '🏷', 'all')
     return new Promise((resolve) => {
@@ -77,6 +67,21 @@ export default {
   fetchUsers: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'users', ids, emoji: '🙋🏻‍' }),
   fetchPosts: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'posts', ids, emoji: '💬' }),
 
+  fetchItems ({ dispatch }, { ids, emoji, resource }) {
+    return Promise.all(ids.map(id => dispatch('fetchItem', { id, emoji, resource })))
+  },
+
+  // ---------------------------------------------------------
+  // Fetch single resource
+  // ---------------------------------------------------------
+
+  fetchCategory: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'categories', id, emoji: '🏷' }),
+  fetchForum: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'forums', id, emoji: '🏁' }),
+  fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id, emoji: '📄' }),
+  fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id, emoji: '💬' }),
+  fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, emoji: '🙋🏻‍' }),
+  fetchAuthUser: ({ dispatch, state }) => dispatch('fetchItem', { resource: 'users', id: state.authId, emoji: '🙋🏻‍' }),
+
   fetchItem ({ state, commit }, { id, emoji, resource }) {
     console.log('🔥', emoji, id)
     return new Promise((resolve) => {
@@ -89,9 +94,5 @@ export default {
         resolve(item)
       })
     })
-  },
-
-  fetchItems ({ dispatch }, { ids, emoji, resource }) {
-    return Promise.all(ids.map(id => dispatch('fetchItem', { id, emoji, resource })))
   }
 }
