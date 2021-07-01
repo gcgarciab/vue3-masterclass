@@ -1,4 +1,4 @@
-import { findById } from '@/helpers'
+import { docToResource, findById } from '@/helpers'
 import firebase from 'firebase'
 
 export default {
@@ -19,7 +19,7 @@ export default {
     await batch.commit()
     const newPost = await postRef.get()
 
-    commit('setItem', { resource: 'posts', item: { ...newPost.data(), id: newPost.id } }) // Set the post
+    commit('setItem', { resource: 'posts', item: newPost }) // Set the post
     commit('appendPostToThread', { childId: newPost.id, parentId: post.threadId }) // append the post to thread
     commit('appendContributorToThread', { childId: state.authId, parentId: post.threadId }) // append the post to thread
   },
@@ -39,7 +39,7 @@ export default {
     await batch.commit()
     const newThread = await threadRef.get()
 
-    commit('setItem', { resource: 'threads', item: { ...newThread.data(), id: newThread.id } })
+    commit('setItem', { resource: 'threads', item: newThread })
     commit('appendThreadToUser', { parentId: userId, childId: thread.id })
     commit('appendThreadToForum', { parentId: forumId, childId: thread.id })
     await dispatch('createPost', { text, threadId: thread.id })
@@ -49,14 +49,23 @@ export default {
 
   async updateThread ({ commit, state }, { title, text, id }) {
     const thread = findById(state.threads, id)
-    const post = findById(state.posts, thread.posts[0].id)
-    const newThread = { ...thread, title }
-    const newPost = { ...post, text }
+    const post = findById(state.posts, thread.posts[0])
+    let newThread = { ...thread, title }
+    let newPost = { ...post, text }
+    const threadRef = firebase.firestore().collection('threads').doc(id)
+    const postRef = firebase.firestore().collection('posts').doc(post.id)
+    const batch = firebase.firestore().batch()
+
+    batch.update(threadRef, newThread)
+    batch.update(postRef, newPost)
+    await batch.commit()
+    newThread = await threadRef.get()
+    newPost = await postRef.get()
 
     commit('setItem', { resource: 'threads', item: newThread })
     commit('setItem', { resource: 'posts', item: newPost })
 
-    return newThread
+    return docToResource(newThread)
   },
 
   updateUser ({ commit }, user) {
