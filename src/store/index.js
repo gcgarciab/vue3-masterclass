@@ -44,6 +44,7 @@ export default createStore({
       return (id) => {
         const thread = findById(state.threads, id)
 
+        if (!thread) return {}
         return {
           ...thread,
           get author () {
@@ -100,6 +101,18 @@ export default createStore({
       commit('setItem', { resource: 'users', item: user })
     },
 
+    // ---------------------------------------------------------
+    // Fetch single resource
+    // ---------------------------------------------------------
+
+    fetchCategory ({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'categories', id, emoji: '🏷' })
+    },
+
+    fetchForum ({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'forums', id, emoji: '🏁' })
+    },
+
     fetchThread ({ dispatch }, { id }) {
       return dispatch('fetchItem', { resource: 'threads', id, emoji: '📄' })
     },
@@ -126,6 +139,14 @@ export default createStore({
           resolve(categories)
         })
       })
+    },
+
+    // ---------------------------------------------------------
+    // Fetch multiple resources
+    // ---------------------------------------------------------
+
+    fetchCategories ({ dispatch }, { ids }) {
+      return dispatch('fetchItems', { resource: 'categories', ids, emoji: '🏷' })
     },
 
     fetchForums ({ dispatch }, { ids }) {
