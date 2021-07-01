@@ -4,5 +4,5 @@ export default {
   threads: [],
   posts: [],
   users: [],
-  authId: 'f5xvKdIPQdSrUtT6i3UiHYttRXO2'
+  authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
 }
