@@ -16,6 +16,7 @@
 <script>
 import ThreadEditor from '@/components/ThreadEditor'
 import { findById } from '@/helpers'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
@@ -41,8 +42,10 @@ export default {
   },
 
   methods: {
+    ...mapActions(['fetchThread', 'fetchPost', 'updateThread']),
+
     async save ({ title, text }) {
-      const thread = await this.$store.dispatch('updateThread', {
+      const thread = await this.updateThread({
         id: this.id,
         title,
         text
@@ -56,8 +59,8 @@ export default {
   },
 
   async created () {
-    const thread = await this.$store.dispatch('fetchThread', { id: this.id })
-    this.$store.dispatch('fetchPost', { id: thread.posts[0] })
+    const thread = await this.fetchThread({ id: this.id })
+    this.fetchPost({ id: thread.posts[0] })
   }
 }
 </script>
