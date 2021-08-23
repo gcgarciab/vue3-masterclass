@@ -22,11 +22,12 @@
           <PostEditor
             v-if="editing === post.id"
             :post="post"
-            @save="editing"
+            @save="handleUpdate($event)"
           />
           <p v-else>{{ post.text }}</p>
         </div>
         <a
+          v-if="post.userId === $store.state.authId"
           style="margin-left: auto; padding-left: 10px"
           class="link-unstyled"
           title="Make a change"
@@ -37,6 +38,12 @@
       </div>
 
       <div class="post-date text-faded">
+        <div
+          v-if="post.edited?.at"
+          class="edition-info"
+        >
+          edited
+        </div>
         <AppDate :timestamp="post.publishedAt" />
       </div>
     </div>
@@ -46,6 +53,7 @@
 <script>
 import AppDate from '@/components/AppDate'
 import PostEditor from '@/components/PostEditor'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
@@ -73,12 +81,19 @@ export default {
   },
 
   methods: {
+    ...mapActions(['updatePost']),
+
     userById (userId) {
       return this.$store.getters.user(userId)
     },
 
     toggleEditMode (id) {
       this.editing = (id === this.editing) ? null : id
+    },
+
+    handleUpdate (event) {
+      this.updatePost(event)
+      this.toggleEditMode()
     }
   }
 }

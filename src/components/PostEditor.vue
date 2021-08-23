@@ -39,6 +39,7 @@ export default {
 
   methods: {
     save () {
+      console.log(this.postCopy)
       this.$emit('save', this.postCopy)
       this.postCopy.text = ''
     }

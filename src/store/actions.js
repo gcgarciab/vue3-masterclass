@@ -68,6 +68,22 @@ export default {
     return docToResource(newThread)
   },
 
+  async updatePost ({ commit, state }, { text, id }) {
+    const post = {
+      text,
+      edited: {
+        at: firebase.firestore.FieldValue.serverTimestamp(),
+        by: state.authId,
+        moderated: false
+      }
+    }
+
+    const postRef = firebase.firestore().collection('posts').doc(id)
+    await postRef.update(post)
+    const updatedPost = await postRef.get()
+    commit('setItem', { resource: 'posts', item: updatedPost })
+  },
+
   updateUser ({ commit }, user) {
     commit('setItem', { resource: 'users', item: user })
   },
@@ -116,7 +132,7 @@ export default {
   fetchItem ({ state, commit }, { id, emoji, resource }) {
     console.log('🔥', emoji, id)
     return new Promise((resolve) => {
-      firebase.firestore().collection(resource).doc(id).onSnapshot((doc) => {
+      const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot((doc) => {
         const item = {
           ...doc.data(),
           id: doc.id
@@ -124,6 +140,13 @@ export default {
         commit('setItem', { resource, id, item })
         resolve(item)
       })
+
+      commit('appendUnsubscribe', { unsubscribe })
     })
+  },
+
+  async unsubscribeAllSnapshots ({ state, commit }) {
+    state.unsubscribes.forEach(unsubscribe => unsubscribe())
+    commit('clearAllUnsubscribes')
   }
 }
