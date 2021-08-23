@@ -18,14 +18,19 @@
       </div>
 
       <div class="post-content">
-        <div>
-          <p>{{ post.text }}</p>
+        <div class="col-full">
+          <PostEditor
+            v-if="editing === post.id"
+            :post="post"
+            @save="editing"
+          />
+          <p v-else>{{ post.text }}</p>
         </div>
         <a
-          href="#"
           style="margin-left: auto; padding-left: 10px"
           class="link-unstyled"
           title="Make a change"
+          @click.prevent="toggleEditMode(post.id)"
         >
           <fa icon="pencil-alt"/>
         </a>
@@ -40,13 +45,24 @@
 
 <script>
 import AppDate from '@/components/AppDate'
+import PostEditor from '@/components/PostEditor'
 
 export default {
-  components: { AppDate },
+  components: {
+    AppDate,
+    PostEditor
+  },
+
   props: {
     posts: {
       type: Array,
       required: true
+    }
+  },
+
+  data () {
+    return {
+      editing: null
     }
   },
 
@@ -59,6 +75,10 @@ export default {
   methods: {
     userById (userId) {
       return this.$store.getters.user(userId)
+    },
+
+    toggleEditMode (id) {
+      this.editing = (id === this.editing) ? null : id
     }
   }
 }
