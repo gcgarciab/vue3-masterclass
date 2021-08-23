@@ -1,7 +1,7 @@
 <template>
   <TheNavbar/>
   <div class="container">
-    <router-view v-show="showPage" @ready="showPage = true"/>
+    <router-view v-show="showPage" @ready="onPageReady()"/>
     <AppSpinner v-show="!showPage" />
   </div>
 </template>
@@ -10,6 +10,7 @@
 import TheNavbar from '@/components/TheNavbar'
 import { mapActions } from 'vuex'
 import AppSpinner from '@/components/AppSpinner'
+import NProgress from 'nprogress'
 
 export default {
   name: 'App',
@@ -23,13 +24,23 @@ export default {
   },
 
   methods: {
-    ...mapActions(['fetchAuthUser'])
+    ...mapActions(['fetchAuthUser']),
+
+    onPageReady () {
+      this.showPage = true
+      NProgress.done()
+    }
   },
 
   created () {
     this.fetchAuthUser()
+    NProgress.configure({
+      speed: 200,
+      showSpinner: false
+    })
     this.$router.beforeEach(() => {
       this.showPage = false
+      NProgress.start()
     })
   }
 }
@@ -37,4 +48,9 @@ export default {
 
 <style>
   @import "assets/style.css";
+  @import "~nprogress/nprogress.css";
+
+  #nprogress .bar {
+    background: #57AD8D !important;
+  }
 </style>
