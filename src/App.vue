@@ -1,7 +1,8 @@
 <template>
   <TheNavbar/>
   <div class="container">
-    <router-view/>
+    <router-view v-show="showPage" @ready="showPage = true"/>
+    <div v-show="!showPage" class="push-top">Loading ...</div>
   </div>
 </template>
 
@@ -14,12 +15,21 @@ export default {
 
   components: { TheNavbar },
 
+  data () {
+    return {
+      showPage: false
+    }
+  },
+
   methods: {
     ...mapActions(['fetchAuthUser'])
   },
 
   created () {
     this.fetchAuthUser()
+    this.$router.beforeEach(() => {
+      this.showPage = false
+    })
   }
 }
 </script>

@@ -138,6 +138,7 @@ export default {
           id: doc.id
         }
         commit('setItem', { resource, id, item })
+        // setTimeout(() => resolve(item), 500)
         resolve(item)
       })
 
