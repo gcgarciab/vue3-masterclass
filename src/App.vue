@@ -2,18 +2,19 @@
   <TheNavbar/>
   <div class="container">
     <router-view v-show="showPage" @ready="showPage = true"/>
-    <div v-show="!showPage" class="push-top">Loading ...</div>
+    <AppSpinner v-show="!showPage" />
   </div>
 </template>
 
 <script>
 import TheNavbar from '@/components/TheNavbar'
 import { mapActions } from 'vuex'
+import AppSpinner from '@/components/AppSpinner'
 
 export default {
   name: 'App',
 
-  components: { TheNavbar },
+  components: { AppSpinner, TheNavbar },
 
   data () {
     return {
