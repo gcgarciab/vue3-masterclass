@@ -1,20 +1,25 @@
 <template>
-  <h1>{{ category.name }}</h1>
+  <section v-if="asyncDataStatus_ready" class="container">
+    <h1>{{ category.name }}</h1>
 
-  <ForumList
-    :title="category.name"
-    :forums="getCategoryForums(category)"/>
+    <ForumList
+      :title="category.name"
+      :forums="getCategoryForums(category)"/>
+  </section>
 </template>
 
 <script>
 import ForumList from '@/components/ForumList'
 import { findById } from '@/helpers'
 import { mapActions } from 'vuex'
+import asyncDataStatus from '@/mixins/async-data-status'
 
 export default {
   components: {
     ForumList
   },
+
+  mixins: [asyncDataStatus],
 
   props: {
     id: {
@@ -39,7 +44,8 @@ export default {
 
   async created () {
     const category = await this.fetchCategory({ id: this.id })
-    this.fetchForums({ ids: category.forums })
+    await this.fetchForums({ ids: category.forums })
+    this.asyncDataStatus_fetched()
   }
 }
 </script>

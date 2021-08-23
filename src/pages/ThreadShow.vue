@@ -1,6 +1,5 @@
-<!--suppress ES6MissingAwait -->
 <template>
-  <div class="col-large push-top">
+  <div v-if="asyncDataStatus_ready" class="col-large push-top">
     <h1>
       {{ thread.title }}
       <router-link
@@ -31,6 +30,7 @@ import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
 import AppDate from '@/components/AppDate'
 import { mapActions } from 'vuex'
+import asyncDataStatus from '@/mixins/async-data-status'
 
 export default {
   name: 'ThreadShow',
@@ -40,6 +40,8 @@ export default {
     PostEditor,
     AppDate
   },
+
+  mixins: [asyncDataStatus],
 
   props: {
     id: {
@@ -86,7 +88,8 @@ export default {
     const posts = await this.fetchPosts({ ids: thread.posts })
     // fetch the users associated with the posts
     const users = posts.map(post => post.userId).concat(thread.userId)
-    this.fetchUsers({ ids: users })
+    await this.fetchUsers({ ids: users })
+    this.asyncDataStatus_fetched()
   }
 }
 </script>
