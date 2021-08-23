@@ -44,8 +44,10 @@
 
 <script>
 import { findById } from '@/helpers'
+import AppDate from '@/components/AppDate'
 
 export default {
+  components: { AppDate },
   props: {
     threads: {
       type: Array,
@@ -69,7 +71,7 @@ export default {
     },
 
     userById (userId) {
-      return findById(this.users, userId)
+      return findById(this.users, userId) || {}
     }
   }
 }
