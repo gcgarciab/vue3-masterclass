@@ -84,13 +84,18 @@ export default {
     commit('setItem', { resource: 'posts', item: updatedPost })
   },
 
-  async createUser ({ commit }, { email, name, username, avatar = null }) {
+  async registerUserWithEmailAndPassword ({ dispatch }, { email, name, username, password, avatar = null }) {
+    const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
+    dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
+  },
+
+  async createUser ({ commit }, { id, email, name, username, avatar = null }) {
     const registeredAt = firebase.firestore.FieldValue.serverTimestamp()
     const usernameLower = username.toLowerCase()
     email = email.toLowerCase()
     const user = { avatar, email, name, username, usernameLower, registeredAt }
 
-    const userRef = await firebase.firestore().collection('users').doc()
+    const userRef = await firebase.firestore().collection('users').doc(id)
     userRef.set(user)
     const newUser = await userRef.get()
 
