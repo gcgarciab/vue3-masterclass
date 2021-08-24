@@ -32,7 +32,7 @@ export default {
     }
   },
 
-  created () {
+  async created () {
     this.fetchAuthUser()
     NProgress.configure({
       speed: 200,

@@ -86,7 +86,9 @@ export default {
 
   async registerUserWithEmailAndPassword ({ dispatch }, { email, name, username, password, avatar = null }) {
     const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
-    dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
+    await dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
+    // update authId
+    // await dispatch('fetchAuthUser')
   },
 
   async createUser ({ commit }, { id, email, name, username, avatar = null }) {
@@ -146,7 +148,12 @@ export default {
   fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id, emoji: '📄' }),
   fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id, emoji: '💬' }),
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, emoji: '🙋🏻‍' }),
-  fetchAuthUser: ({ dispatch, state }) => dispatch('fetchItem', { resource: 'users', id: state.authId, emoji: '🙋🏻‍' }),
+
+  fetchAuthUser: async ({ dispatch, commit }) => {
+    const userId = await firebase.auth().currentUser?.uid
+    dispatch('fetchItem', { resource: 'users', id: userId, emoji: '🙋🏻‍' })
+    commit('setAuthId', userId)
+  },
 
   fetchItem ({ state, commit }, { id, emoji, resource }) {
     console.log('🔥', emoji, id)
