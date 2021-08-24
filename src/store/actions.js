@@ -87,8 +87,15 @@ export default {
   async registerUserWithEmailAndPassword ({ dispatch }, { email, name, username, password, avatar = null }) {
     const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
     await dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
-    // update authId
-    // await dispatch('fetchAuthUser')
+  },
+
+  signInWithEmailAndPassword ({ context }, { email, password }) {
+    return firebase.auth().signInWithEmailAndPassword(email, password)
+  },
+
+  async signOut ({ commit }) {
+    await firebase.auth().signOut()
+    commit('setAuthId', null)
   },
 
   async createUser ({ commit }, { id, email, name, username, avatar = null }) {

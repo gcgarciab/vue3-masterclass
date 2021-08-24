@@ -9,6 +9,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Profile from '@/pages/Profile'
 import store from '@/store'
 import Register from '@/pages/Register'
+import SignIn from '@/pages/SignIn'
 
 const routes = [
   {
@@ -82,6 +83,11 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register
+  },
+  {
+    path: '/login',
+    name: 'SignIn',
+    component: SignIn
   },
   {
     path: '/:pathMatch(.*)*',
