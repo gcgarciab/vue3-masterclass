@@ -73,10 +73,9 @@ export default {
 
     addPost (eventData) {
       const post = {
-        ...eventData.post,
+        ...eventData,
         threadId: this.id
       }
-
       this.createPost(post)
     }
   },
