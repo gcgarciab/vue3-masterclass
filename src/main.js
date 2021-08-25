@@ -8,6 +8,15 @@ import FontAwesome from '@/plugins/font-awesome'
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
+firebase.auth().onAuthStateChanged(user => {
+  store.dispatch('unsubscribeAuthUserSnapshot')
+
+  if (user) {
+    store.dispatch('fetchAuthUser')
+  } else {
+    store.dispatch('signOut')
+  }
+})
 
 const forumApp = createApp(App)
 forumApp.use(router)

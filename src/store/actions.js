@@ -84,6 +84,48 @@ export default {
     commit('setItem', { resource: 'posts', item: updatedPost })
   },
 
+  async registerUserWithEmailAndPassword ({ dispatch }, { email, name, username, password, avatar = null }) {
+    const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
+    await dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
+  },
+
+  signInWithEmailAndPassword ({ context }, { email, password }) {
+    return firebase.auth().signInWithEmailAndPassword(email, password)
+  },
+
+  async signInWithGoogle ({ dispatch }) {
+    const provider = new firebase.auth.GoogleAuthProvider()
+    const response = await firebase.auth().signInWithPopup(provider)
+    const user = response.user
+    const userRef = firebase.firestore().collection('users').doc(user.uid)
+    const userDoc = await userRef.get()
+
+    if (!userDoc.exists) {
+      dispatch('createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL })
+    } else {
+      console.log(user)
+    }
+  },
+
+  async signOut ({ commit }) {
+    await firebase.auth().signOut()
+    commit('setAuthId', null)
+  },
+
+  async createUser ({ commit }, { id, email, name, username, avatar = null }) {
+    const registeredAt = firebase.firestore.FieldValue.serverTimestamp()
+    const usernameLower = username.toLowerCase()
+    email = email.toLowerCase()
+    const user = { avatar, email, name, username, usernameLower, registeredAt }
+
+    const userRef = await firebase.firestore().collection('users').doc(id)
+    userRef.set(user)
+    const newUser = await userRef.get()
+
+    commit('setItem', { resource: 'users', item: newUser })
+    return docToResource(newUser)
+  },
+
   updateUser ({ commit }, user) {
     commit('setItem', { resource: 'users', item: user })
   },
@@ -127,26 +169,45 @@ export default {
   fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id, emoji: '📄' }),
   fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id, emoji: '💬' }),
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, emoji: '🙋🏻‍' }),
-  fetchAuthUser: ({ dispatch, state }) => dispatch('fetchItem', { resource: 'users', id: state.authId, emoji: '🙋🏻‍' }),
 
-  fetchItem ({ state, commit }, { id, emoji, resource }) {
+  fetchAuthUser: async ({ dispatch, commit }) => {
+    const userId = await firebase.auth().currentUser?.uid
+    dispatch('fetchItem', {
+      resource: 'users',
+      id: userId,
+      emoji: '🙋🏻‍',
+      handleUnsubscribe: (unsubscribe) => commit('setAuthUserUnsubscribe', unsubscribe)
+    })
+    commit('setAuthId', userId)
+  },
+
+  fetchItem ({ state, commit }, { id, emoji, resource, handleUnsubscribe = null }) {
     console.log('🔥', emoji, id)
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot((doc) => {
-        const item = {
-          ...doc.data(),
-          id: doc.id
-        }
+        console.log('on snapshot', resource, doc.data())
+        const item = { ...doc.data(), id: doc.id }
         commit('setItem', { resource, id, item })
         resolve(item)
       })
 
-      commit('appendUnsubscribe', { unsubscribe })
+      if (handleUnsubscribe) {
+        handleUnsubscribe(unsubscribe)
+      } else {
+        commit('appendUnsubscribe', { unsubscribe })
+      }
     })
   },
 
   async unsubscribeAllSnapshots ({ state, commit }) {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())
     commit('clearAllUnsubscribes')
+  },
+
+  async unsubscribeAuthUserSnapshot ({ state, commit }) {
+    if (state.authUserUnsubscribe) {
+      state.authUserUnsubscribe()
+      commit('setAuthUserUnsubscribe', null)
+    }
   }
 }
