@@ -93,6 +93,20 @@ export default {
     return firebase.auth().signInWithEmailAndPassword(email, password)
   },
 
+  async signInWithGoogle ({ dispatch }) {
+    const provider = new firebase.auth.GoogleAuthProvider()
+    const response = await firebase.auth().signInWithPopup(provider)
+    const user = response.user
+    const userRef = firebase.firestore().collection('users').doc(user.uid)
+    const userDoc = await userRef.get()
+
+    if (!userDoc.exists) {
+      dispatch('createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL })
+    } else {
+      console.log(user)
+    }
+  },
+
   async signOut ({ commit }) {
     await firebase.auth().signOut()
     commit('setAuthId', null)
