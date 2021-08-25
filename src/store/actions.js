@@ -172,28 +172,42 @@ export default {
 
   fetchAuthUser: async ({ dispatch, commit }) => {
     const userId = await firebase.auth().currentUser?.uid
-    dispatch('fetchItem', { resource: 'users', id: userId, emoji: '🙋🏻‍' })
+    dispatch('fetchItem', {
+      resource: 'users',
+      id: userId,
+      emoji: '🙋🏻‍',
+      handleUnsubscribe: (unsubscribe) => commit('setAuthUserUnsubscribe', unsubscribe)
+    })
     commit('setAuthId', userId)
   },
 
-  fetchItem ({ state, commit }, { id, emoji, resource }) {
+  fetchItem ({ state, commit }, { id, emoji, resource, handleUnsubscribe = null }) {
     console.log('🔥', emoji, id)
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot((doc) => {
-        const item = {
-          ...doc.data(),
-          id: doc.id
-        }
+        console.log('on snapshot', resource, doc.data())
+        const item = { ...doc.data(), id: doc.id }
         commit('setItem', { resource, id, item })
         resolve(item)
       })
 
-      commit('appendUnsubscribe', { unsubscribe })
+      if (handleUnsubscribe) {
+        handleUnsubscribe(unsubscribe)
+      } else {
+        commit('appendUnsubscribe', { unsubscribe })
+      }
     })
   },
 
   async unsubscribeAllSnapshots ({ state, commit }) {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())
     commit('clearAllUnsubscribes')
+  },
+
+  async unsubscribeAuthUserSnapshot ({ state, commit }) {
+    if (state.authUserUnsubscribe) {
+      state.authUserUnsubscribe()
+      commit('setAuthUserUnsubscribe', null)
+    }
   }
 }

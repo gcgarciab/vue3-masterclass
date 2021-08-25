@@ -5,5 +5,6 @@ export default {
   posts: [],
   users: [],
   authId: null,
-  unsubscribes: []
+  unsubscribes: [],
+  authUserUnsubscribe: null
 }
