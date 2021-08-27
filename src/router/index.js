@@ -24,6 +24,9 @@ const routes = [
     meta: {
       toTop: true,
       smoothScroll: true
+    },
+    beforeEnter (to, from) {
+      if (!store.state.authId) return { name: 'Home' }
     }
   },
   {
@@ -88,6 +91,14 @@ const routes = [
     path: '/login',
     name: 'SignIn',
     component: SignIn
+  },
+  {
+    path: '/logout',
+    name: 'SignOut',
+    async beforeEnter (to, from) {
+      await store.dispatch('signOut')
+      return { name: 'Home' }
+    }
   },
   {
     path: '/:pathMatch(.*)*',

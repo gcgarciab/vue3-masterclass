@@ -174,7 +174,7 @@ export default {
     const userId = await firebase.auth().currentUser?.uid
     dispatch('fetchItem', {
       resource: 'users',
-      id: userId,
+      id: userId || state.authId,
       emoji: '🙋🏻‍',
       handleUnsubscribe: (unsubscribe) => commit('setAuthUserUnsubscribe', unsubscribe)
     })
