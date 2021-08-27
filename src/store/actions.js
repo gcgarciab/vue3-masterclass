@@ -170,7 +170,7 @@ export default {
   fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id, emoji: '💬' }),
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, emoji: '🙋🏻‍' }),
 
-  fetchAuthUser: async ({ dispatch, commit }) => {
+  fetchAuthUser: async ({ state, dispatch, commit }) => {
     const userId = await firebase.auth().currentUser?.uid
     dispatch('fetchItem', {
       resource: 'users',
@@ -185,7 +185,7 @@ export default {
     console.log('🔥', emoji, id)
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot((doc) => {
-        console.log('on snapshot', resource, doc.data())
+        // console.log('on snapshot', resource, doc.data())
         const item = { ...doc.data(), id: doc.id }
         commit('setItem', { resource, id, item })
         resolve(item)
