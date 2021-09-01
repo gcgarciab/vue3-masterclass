@@ -170,15 +170,18 @@ export default {
   fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id, emoji: '💬' }),
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, emoji: '🙋🏻‍' }),
 
-  fetchAuthUser: async ({ state, dispatch, commit }) => {
+  fetchAuthUser: async ({ dispatch, commit }) => {
     const userId = await firebase.auth().currentUser?.uid
-    dispatch('fetchItem', {
-      resource: 'users',
-      id: userId || state.authId,
-      emoji: '🙋🏻‍',
-      handleUnsubscribe: (unsubscribe) => commit('setAuthUserUnsubscribe', unsubscribe)
-    })
-    commit('setAuthId', userId)
+
+    if (userId) {
+      dispatch('fetchItem', {
+        resource: 'users',
+        id: userId,
+        emoji: '🙋🏻‍',
+        handleUnsubscribe: (unsubscribe) => commit('setAuthUserUnsubscribe', unsubscribe)
+      })
+      commit('setAuthId', userId)
+    }
   },
 
   fetchItem ({ state, commit }, { id, emoji, resource, handleUnsubscribe = null }) {

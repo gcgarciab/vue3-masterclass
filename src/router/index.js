@@ -23,10 +23,8 @@ const routes = [
     component: Profile,
     meta: {
       toTop: true,
-      smoothScroll: true
-    },
-    beforeEnter (to, from) {
-      if (!store.state.authId) return { name: 'Home' }
+      smoothScroll: true,
+      requiresAuth: true
     }
   },
   {
@@ -95,7 +93,7 @@ const routes = [
   {
     path: '/logout',
     name: 'SignOut',
-    async beforeEnter (to, from) {
+    async beforeEnter () {
       await store.dispatch('signOut')
       return { name: 'Home' }
     }
@@ -120,8 +118,13 @@ const router = createRouter({
   }
 })
 
-router.beforeEach(() => {
+router.beforeEach((to, from) => {
+  console.log(`🚦 navigating to ${to.name} from ${from.name}`)
   store.dispatch('unsubscribeAllSnapshots')
+  console.log(store.state.authId)
+  if (to.meta.requiresAuth && !store.state.authId) {
+    return { name: 'Home' }
+  }
 })
 
 export default router
