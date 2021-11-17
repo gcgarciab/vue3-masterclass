@@ -151,6 +151,17 @@ export default {
     commit('setItem', { resource: 'users', item: user })
   },
 
+  async fetchAuthUsersPost ({ commit, state }) {
+    const posts = await firebase.firestore().collection('posts').where('userId', '==', state.authId).get()
+    posts.forEach(item => {
+      commit('setItem', { resource: 'posts', item })
+    })
+  },
+
+  // ---------------------------------------------------------
+  // Fetch all categories
+  // ---------------------------------------------------------
+
   fetchAllCategories ({ commit }) {
     console.log('🔥', '🏷', 'all')
     return new Promise((resolve) => {
