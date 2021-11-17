@@ -9,6 +9,8 @@
       :text="text"
       @save="save"
       @cancel="cancel"
+      @dirty="isFormDirty = true"
+      @clean="isFormDirty = false"
     />
   </div>
 </template>
@@ -30,6 +32,12 @@ export default {
     id: {
       type: String,
       required: true
+    }
+  },
+
+  data () {
+    return {
+      isFormDirty: false
     }
   },
 
@@ -65,6 +73,13 @@ export default {
     const thread = await this.fetchThread({ id: this.id })
     await this.fetchPost({ id: thread.posts[0] })
     this.asyncDataStatus_fetched()
+  },
+
+  beforeRouteLeave () {
+    if (this.isFormDirty) {
+      const confirmed = window.confirm('Are you sure you want to leave ? Unsaved changes will be lost!')
+      if (!confirmed) return false
+    }
   }
 }
 </script>
