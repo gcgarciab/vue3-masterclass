@@ -1,16 +1,18 @@
 import firebase from 'firebase'
 
 export default {
+  namespaced: true,
+
   state: {
     // authId: 'vdRpwF3D60dJR6Ud0Sv4u9Pcoxn2',
-    id: null,
+    authId: null,
     authUserUnsubscribe: null,
     authObserverUnsubscribe: null
   },
 
   getters: {
-    authUser: (state, getters) => {
-      return getters.user(state.authId)
+    authUser: (state, getters, rootState, rootGetters) => {
+      return rootGetters['users/user'](state.authId)
     }
   },
 
@@ -39,7 +41,7 @@ export default {
     async fetchAuthUsersPost ({ commit, state }) {
       const posts = await firebase.firestore().collection('posts').where('userId', '==', state.authId).get()
       posts.forEach(item => {
-        commit('setItem', { resource: 'posts', item })
+        commit('setItem', { resource: 'posts', item }, { root: true })
       })
     },
 
@@ -52,14 +54,16 @@ export default {
           id: userId,
           emoji: '🙋🏻‍',
           handleUnsubscribe: (unsubscribe) => commit('setAuthUserUnsubscribe', unsubscribe)
-        })
+        },
+        { root: true }
+        )
         commit('setAuthId', userId)
       }
     },
 
     async registerUserWithEmailAndPassword ({ dispatch }, { email, name, username, password, avatar = null }) {
       const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
-      await dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
+      await dispatch('users/createUser', { id: result.user.uid, avatar, email, name, username }, { root: true })
     },
 
     signInWithEmailAndPassword ({ context }, { email, password }) {
@@ -74,7 +78,10 @@ export default {
       const userDoc = await userRef.get()
 
       if (!userDoc.exists) {
-        dispatch('createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL })
+        dispatch('user/{ root: true }createUser',
+          { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL },
+          { root: true }
+        )
       } else {
         console.log(user)
       }
@@ -95,7 +102,7 @@ export default {
 
   mutations: {
     setAuthId (state, id) {
-      state.id = id
+      state.authId = id
     },
 
     setAuthUserUnsubscribe (state, unsubscribe) {

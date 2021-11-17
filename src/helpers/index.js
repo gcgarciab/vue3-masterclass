@@ -20,7 +20,7 @@ export const docToResource = (doc) => {
 
 export const appendChildToParentMutation = ({ parent, child }) => {
   return (state, { childId, parentId }) => {
-    const resource = findById(state[parent], parentId)
+    const resource = findById(state.items, parentId)
     if (!resource) {
       console.warn(`Appending ${child} to ${parent} ${parentId} failed because the parent didn't exists.`)
       return
