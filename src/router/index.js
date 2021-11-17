@@ -10,6 +10,7 @@ import Profile from '@/pages/Profile'
 import store from '@/store'
 import Register from '@/pages/Register'
 import SignIn from '@/pages/SignIn'
+import { findById } from '@/helpers'
 
 const routes = [
   {
@@ -49,24 +50,25 @@ const routes = [
     path: '/thread/:id',
     name: 'ThreadShow',
     component: ThreadShow,
-    props: true
+    props: true,
     // route guard
-    // beforeEnter (to, from, next) {
-    //   // Check if thread exists
-    //   const threadExists = findById(sourceData.threads, to.params.id)
-    //   // if exists continue
-    //   if (threadExists) {
-    //     return next()
-    //   } else {
-    //     next({
-    //       name: 'NotFound',
-    //       params: { pathMatch: to.path.substring(1).split('/') },
-    //       // preserve existing query and hash
-    //       query: to.query,
-    //       hash: to.hash
-    //     })
-    //   }
-    // }
+    async beforeEnter (to, from, next) {
+      await store.dispatch('fetchThread', { id: to.params.id })
+      // Check if thread exists
+      const threadExists = findById(store.state.threads, to.params.id)
+      // if exists continue
+      if (threadExists) {
+        return next()
+      } else {
+        next({
+          name: 'NotFound',
+          params: { pathMatch: to.path.substring(1).split('/') },
+          // preserve existing query and hash
+          query: to.query,
+          hash: to.hash
+        })
+      }
+    }
   },
   {
     path: '/forum/:forumId/thread/create',
