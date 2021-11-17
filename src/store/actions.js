@@ -2,6 +2,27 @@ import { docToResource, findById } from '@/helpers'
 import firebase from 'firebase'
 
 export default {
+  initAuthentication ({ dispatch, commit, state }) {
+    if (state.authObserverUnsubscribe) state.authObserverUnsubscribe()
+
+    return new Promise((resolve) => {
+      const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+        console.log('👣 the user has changed')
+        dispatch('unsubscribeAuthUserSnapshot')
+
+        if (user) {
+          await dispatch('fetchAuthUser')
+          resolve(user)
+        } else {
+          dispatch('signOut')
+          resolve(null)
+        }
+      })
+
+      commit('setAuthObserverUnsubscribe', unsubscribe)
+    })
+  },
+
   async createPost ({ commit, state }, post) {
     post.userId = state.authId
     post.publishedAt = firebase.firestore.FieldValue.serverTimestamp()
@@ -170,11 +191,11 @@ export default {
   fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id, emoji: '💬' }),
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, emoji: '🙋🏻‍' }),
 
-  fetchAuthUser: async ({ dispatch, commit }) => {
+  fetchAuthUser: async ({ state, dispatch, commit }) => {
     const userId = await firebase.auth().currentUser?.uid
 
-    if (userId) {
-      dispatch('fetchItem', {
+    if (userId || state.authId) {
+      await dispatch('fetchItem', {
         resource: 'users',
         id: userId,
         emoji: '🙋🏻‍',

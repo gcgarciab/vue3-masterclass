@@ -7,5 +7,6 @@ export default {
   // authId: 'vdRpwF3D60dJR6Ud0Sv4u9Pcoxn2',
   authId: null,
   unsubscribes: [],
-  authUserUnsubscribe: null
+  authUserUnsubscribe: null,
+  authObserverUnsubscribe: null
 }
