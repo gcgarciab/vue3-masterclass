@@ -2,6 +2,7 @@
   <div v-if="asyncDataStatus_ready" class="col-large push-top">
     <h1>
       {{ thread.title }}
+      <router-link :to="{ name: 'ThreadShow', params: { id: '-KsjWehQ--apjDBwSBCY' } }">Random thread</router-link>
       <router-link
         v-if="thread.userId === authUser?.id"
         :to="{ name: 'ThreadEdit', id: this.id }"
