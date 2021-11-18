@@ -1,6 +1,9 @@
 <!--suppress JSUnresolvedVariable -->
 <template>
-  <header class="header" id="header" v-click-outside="closeMobileNavbar">
+  <header class="header" id="header"
+    v-click-outside="closeMobileNavbar"
+    v-page-scroll="closeMobileNavbar"
+  >
     <router-link :to="{ name: 'Home' }" class="logo">
       <img src="../assets/svg/vueschool-logo.svg" alt="Vueschool logo">
     </router-link>
