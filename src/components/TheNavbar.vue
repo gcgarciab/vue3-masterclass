@@ -6,7 +6,7 @@
     </router-link>
 
     <div class="btn-hamburger">
-      <!-- use .btn-humburger-active to open the menu -->
+      <!-- use .btn-hamburger-active to open the menu -->
       <div class="top bar"></div>
       <div class="middle bar"></div>
       <div class="bottom bar"></div>
@@ -16,7 +16,10 @@
     <nav class="navbar">
       <ul>
         <li v-if="authUser" class="navbar-user">
-          <a @click.prevent="userDropdownOpened = !userDropdownOpened">
+          <a
+            @click.prevent="userDropdownOpen = !userDropdownOpen"
+            v-click-outside="() => userDropdownOpen = false"
+          >
             <img class="avatar-small" :src="authUser.avatar" :alt="authUser.name">
             <span>
               {{ authUser.name }}
@@ -26,7 +29,7 @@
 
           <!-- dropdown menu -->
           <!-- add class "active-drop" to show the dropdown -->
-          <div id="user-dropdown" :class="{ 'active-drop': userDropdownOpened }">
+          <div id="user-dropdown" :class="{ 'active-drop': userDropdownOpen }">
             <div class="triangle-drop"></div>
             <ul class="dropdown-menu">
               <li class="dropdown-menu-item"><router-link :to="{ name: 'Profile' }">View profile</router-link></li>
@@ -71,7 +74,7 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      userDropdownOpened: false
+      userDropdownOpen: false
     }
   },
 
