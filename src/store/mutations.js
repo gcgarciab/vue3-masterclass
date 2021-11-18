@@ -1,20 +1,8 @@
-import { docToResource, findById, upsert } from '@/helpers'
+import { docToResource, upsert } from '@/helpers'
 
 export default {
   setItem (state, { resource, item }) {
-    upsert(state[resource], docToResource(item))
-  },
-
-  setAuthId (state, id) {
-    state.authId = id
-  },
-
-  setAuthUserUnsubscribe (state, unsubscribe) {
-    state.authUserUnsubscribe = unsubscribe
-  },
-
-  setAuthObserverUnsubscribe (state, unsubscribe) {
-    state.authObserverUnsubscribe = unsubscribe
+    upsert(state[resource].items, docToResource(item))
   },
 
   appendUnsubscribe (state, { unsubscribe }) {
@@ -23,29 +11,5 @@ export default {
 
   clearAllUnsubscribes (state) {
     state.unsubscribes = []
-  },
-
-  appendPostToThread: appendChildToParentMutation({ parent: 'threads', child: 'posts' }),
-
-  appendThreadToForum: appendChildToParentMutation({ parent: 'forums', child: 'threads' }),
-
-  appendThreadToUser: appendChildToParentMutation({ parent: 'users', child: 'threads' }),
-
-  appendContributorToThread: appendChildToParentMutation({ parent: 'threads', child: 'contributors' })
-}
-
-function appendChildToParentMutation ({ parent, child }) {
-  return (state, { childId, parentId }) => {
-    const resource = findById(state[parent], parentId)
-    if (!resource) {
-      console.warn(`Appending ${child} to ${parent} ${parentId} failed because the parent didn't exists.`)
-      return
-    }
-
-    resource[child] = resource[child] || []
-
-    if (!resource[child].includes(childId)) {
-      resource[child].push(childId)
-    }
   }
 }

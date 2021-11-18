@@ -45,11 +45,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ user: 'authUser' })
+    ...mapGetters('auth', { user: 'authUser' })
   },
 
   async created () {
-    await this.$store.dispatch('fetchAuthUsersPost')
+    await this.$store.dispatch('auth/fetchAuthUsersPost')
     this.asyncDataStatus_fetched()
   }
 }
