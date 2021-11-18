@@ -1,11 +1,11 @@
 <!--suppress JSUnresolvedVariable -->
 <template>
-  <header class="header" id="header">
+  <header class="header" id="header" v-click-outside="closeMobileNavbar">
     <router-link :to="{ name: 'Home' }" class="logo">
       <img src="../assets/svg/vueschool-logo.svg" alt="Vueschool logo">
     </router-link>
 
-    <div class="btn-hamburger">
+    <div class="btn-hamburger" @click="mobileNavMenu = !mobileNavMenu">
       <!-- use .btn-hamburger-active to open the menu -->
       <div class="top bar"></div>
       <div class="middle bar"></div>
@@ -13,12 +13,12 @@
     </div>
 
     <!-- use .navbar-open to open nav -->
-    <nav class="navbar">
+    <nav class="navbar" :class="{ 'navbar-open': mobileNavMenu }">
       <ul>
         <li v-if="authUser" class="navbar-user">
           <a
             @click.prevent="userDropdownOpen = !userDropdownOpen"
-            v-click-outside="() => userDropdownOpen = false"
+            v-click-outside="closeDropdown"
           >
             <img class="avatar-small" :src="authUser.avatar" :alt="authUser.name">
             <span>
@@ -33,7 +33,7 @@
             <div class="triangle-drop"></div>
             <ul class="dropdown-menu">
               <li class="dropdown-menu-item"><router-link :to="{ name: 'Profile' }">View profile</router-link></li>
-              <li class="dropdown-menu-item"><a @click="$store.dispatch('auth/signOut')">Sign Out</a></li>
+              <li class="dropdown-menu-item"><a @click.prevent="signOut()">Sign Out</a></li>
             </ul>
           </div>
         </li>
@@ -42,6 +42,12 @@
         </li>
         <li v-if="!authUser" class="navbar-item">
           <router-link :to="{ name: 'Register' }">Register</router-link>
+        </li>
+        <li v-if="authUser" class="navbar-mobile-item">
+          <router-link :to="{ name: 'Profile' }">View Profile</router-link>
+        </li>
+        <li v-if="authUser" class="navbar-mobile-item">
+          <a @click.prevent="signOut()">Sign Out</a>
         </li>
       </ul>
 
@@ -74,12 +80,34 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      userDropdownOpen: false
+      userDropdownOpen: false,
+      mobileNavMenu: false
     }
   },
 
   computed: {
     ...mapGetters('auth', ['authUser'])
+  },
+
+  methods: {
+    closeDropdown () {
+      this.userDropdownOpen = false
+    },
+
+    closeMobileNavbar () {
+      this.mobileNavMenu = false
+    },
+
+    signOut () {
+      this.$store.dispatch('auth/signOut')
+      this.$router.push({ name: 'Home' })
+    }
+  },
+
+  created () {
+    this.$router.beforeEach((to, from) => {
+      this.mobileNavMenu = false
+    })
   }
 }
 </script>
