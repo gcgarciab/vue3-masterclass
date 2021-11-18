@@ -42,7 +42,7 @@ export default {
       let query = await firebase.firestore().collection('posts')
         .where('userId', '==', state.authId)
         .orderBy('publishedAt', 'desc')
-        .limit(2)
+        .limit(3)
 
       if (startAfter) {
         const doc = await firebase.firestore().collection('posts').doc(startAfter.id).get()

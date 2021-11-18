@@ -16,6 +16,11 @@
         <hr/>
 
         <PostList :posts="user.posts" />
+
+        <AppInfiniteScroll
+          @load="fetchUserPosts()"
+          :done="user.posts.length === user.postsCount"
+        />
       </div>
     </div>
   </div>
@@ -27,9 +32,11 @@ import PostList from '@/components/PostList'
 import UserProfileCard from '@/components/UserProfileCard'
 import UserProfileCardEditor from '@/components/UserProfileCardEditor'
 import asyncDataStatus from '@/mixins/async-data-status'
+import AppInfiniteScroll from '@/components/AppInfiniteScroll'
 
 export default {
   components: {
+    AppInfiniteScroll,
     PostList,
     UserProfileCard,
     UserProfileCardEditor
@@ -54,11 +61,14 @@ export default {
     }
   },
 
-  async created () {
-    await this.$store.dispatch('auth/fetchAuthUsersPost', {
-      startAfter: this.lastPostFetched
-    })
+  methods: {
+    fetchUserPosts () {
+      return this.$store.dispatch('auth/fetchAuthUsersPost', { startAfter: this.lastPostFetched })
+    }
+  },
 
+  async created () {
+    await this.fetchUserPosts()
     this.asyncDataStatus_fetched()
   }
 }
