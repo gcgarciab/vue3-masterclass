@@ -78,7 +78,7 @@ export default {
       const userDoc = await userRef.get()
 
       if (!userDoc.exists) {
-        dispatch('user/{ root: true }createUser',
+        dispatch('users/createUser',
           { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL },
           { root: true }
         )

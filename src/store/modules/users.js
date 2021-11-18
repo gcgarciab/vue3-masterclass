@@ -44,7 +44,7 @@ export default {
       userRef.set(user)
       const newUser = await userRef.get()
 
-      commit('setItem', { resource: 'users', item: newUser })
+      commit('setItem', { resource: 'users', item: newUser }, { root: true })
       return docToResource(newUser)
     },
 
